@@ -18,6 +18,7 @@ This module makes use of a subset of the public code for
 [deepRegression](https://github.com/bazilas/matconvnet-deepReg).
 
 
+
 ### Install
 
 The module is easiest to install with the `vl_contrib` package manager:
@@ -72,6 +73,13 @@ We can introduce further outliers (with probability `0.3`) to explore this effec
 In this scenario, the model trained with the `huber` loss is displaced 
 while the `tukey` loss remains unaffected (it's extremely robust). 
 
-It's worth noting that robustness to outliers is not necessarily the most 
+
+### Notes
+
+It's worth mentioning that robustness to outliers is not necessarily the most 
 desirable property of a loss function, so the choice of which is best for a given 
-task depends heavily on the distribution of your data.
+task depends heavily on the distribution of your data. 
+
+Some recent [work](https://arxiv.org/pdf/1701.03077.pdf) by 
+[Jonathan Barron](http://jonbarron.info/) has looked at exploring a general 
+form of robust loss, which makes for some interesting extra reading.

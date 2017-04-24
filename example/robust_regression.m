@@ -118,4 +118,8 @@ plot(data_x, tPreds, '--', 'LineWidth', 2) ;
 plot(data_x, hPreds, ':', 'LineWidth', 2) ;
 legend('data', 'Euclidean', 'Huber', 'Tukey') ;
 xlabel('x') ; ylabel('y') ;
-zs_dispFig ;
+
+% display in terminal if zsvision is installed
+if exist('zs_dispFig')
+  zs_dispFig ;
+end

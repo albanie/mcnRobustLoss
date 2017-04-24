@@ -7,3 +7,4 @@ root = fileparts(mfilename('fullpath')) ;
 addpath(root) ;
 addpath(fullfile(root, 'matlab')) ;
 addpath(fullfile(root, 'example')) ;
+addpath(fullfile(root, 'example/utils')) ;

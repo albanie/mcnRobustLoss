@@ -16,6 +16,7 @@ function y = vl_nntukeyloss(x, t, varargin)
 %
 % (modified by Samuel Albanie, 2017)
 
+opts.scaleRes = 1 ;
 opts.instanceWeights = ones(size(x)) ;
 [opts, dzdy] = vl_argparsepos(opts, varargin, 'nonrecursive') ;
 
@@ -30,9 +31,7 @@ C = 4.685 ;
 nonZer = round(100 * sum(abs(res(:)) < C) / numel(res)) ;
 
 % Big V says that this sometimes helps the convergence
-if nonZer < 70 
-    MAD = MAD * 7 ; 
-end
+MAD = MAD * opts.scaleRes ; 
 
 res = bsxfun(@rdivide, res, MAD) ;
 

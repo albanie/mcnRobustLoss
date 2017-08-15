@@ -1,63 +1,66 @@
-function robust_regression(expDir, varargin) 
+function robust_regression2(expDir, varargin) 
 % robust_regression2 examines the loss curves produced by
-% different loss functions on regression tasks
+% different objective functions on regression tasks
+%
+% This example looks at the problem of facial keypoint detection 
+% (this dataset was used in a recent kaggle competition)
+%
+% Copyright (C) 2017 Samuel Albanie 
+% Licensed under The MIT License [see LICENSE.md for details]
 
-% we will tackle a slightly more interesting regression task - 
-% facial keypoint detection (this dataset was used in a recent
-% kaggle competition)
+  rng(0) ;
 
-% add AutoNN to the path
-run(fullfile(vl_rootnn, 'contrib/autonn/setup_autonn.m')) ; 
-rng(0) ;
+  % add AutoNN to the path
+  run(fullfile(vl_rootnn, 'contrib/autonn/setup_autonn.m')) ; 
 
-opts.architecture = 'resnet50' ;
-opts.valRatio = 0.2 ;
-opts.train.gpus = [2] ;
-opts.residualScale = 96 ;
-opts.loss = 'euclidean' ;
-opts.refreshEvaluationCache = false ;
-opts = vl_argparse(opts, varargin) ;
+  opts.valRatio = 0.2 ;
+  opts.train.gpus = 2 ;
+  opts.residualScale = 96 ;
+  opts.architecture = 'resnet50' ;
+  opts.loss = 'euclidean' ;
+  opts.refreshEvaluationCache = false ;
+  opts = vl_argparse(opts, varargin) ;
 
-% choose a data location
-dataOpts.dataDir = fullfile(vl_rootnn, 'data/datasets/kaggle-keypoints') ;
-dataOpts.imdbPath = fullfile(dataOpts.dataDir, 'imdb.mat') ;
-dataOpts.valRatio = opts.valRatio ;
+  % choose a data location
+  dataOpts.dataDir = fullfile(vl_rootnn, 'data/datasets/kaggle-keypoints') ;
+  dataOpts.imdbPath = fullfile(dataOpts.dataDir, 'imdb.mat') ;
+  dataOpts.valRatio = opts.valRatio ;
 
-% set model options
-modelOpts.loss = opts.loss ;
-modelOpts.architecture = opts.architecture ;
-modelOpts.residualScale = opts.residualScale ; % scale outputs to [0,1]
+  % set model options
+  modelOpts.loss = opts.loss ;
+  modelOpts.architecture = opts.architecture ;
+  modelOpts.residualScale = opts.residualScale ; % scale outputs to [0,1]
 
-% training options
-train = opts.train ;
-train.learningRate = [0.001 * ones(1,20)  ones(1,10) * 0.0001] ;
-train.batchSize = 32 ;
-train.numEpochs = numel(train.learningRate) ;
-opts.train.continue = 1 ;
-train.stats = {'regLoss', 'rmse'} ;
-train.extractStatsFn = @extractStats ;
+  % training options
+  train = opts.train ;
+  train.learningRate = [0.001 * ones(1,20)  ones(1,10) * 0.0001] ;
+  train.batchSize = 32 ;
+  train.numEpochs = numel(train.learningRate) ;
+  opts.train.continue = 1 ;
+  train.stats = {'regLoss', 'rmse'} ;
+  train.extractStatsFn = @extractStats ;
 
-% collate options
-opts.dataOpts = dataOpts ;
-opts.modelOpts = modelOpts ;
-opts.train = train ;
+  % collate options
+  opts.dataOpts = dataOpts ;
+  opts.modelOpts = modelOpts ;
+  opts.train = train ;
 
-% build network
-[net, opts] = net_init(opts) ;
+  % build network
+  [net, opts] = net_init(opts) ;
 
-% load imdb
-imdb = loadImdb(opts) ;
+  % load imdb
+  imdb = loadImdb(opts) ;
 
-[net, info] = cnn_train_autonn(net, imdb, ...
-                                 @(x,y) getBatch(x, y, opts), opts.train, ...
-                                 'val', find(imdb.images.set == 2), ...
-                                 'expDir', expDir) ;
+  [net, info] = cnn_train_autonn(net, imdb, ...
+                                   @(x,y) getBatch(x, y, opts), opts.train, ...
+                                   'val', find(imdb.images.set == 2), ...
+                                   'expDir', expDir) ;
 
-bestEpoch = findBestCheckpoint(expDir, 'priorityMetric', 'regLoss', ...
-                               'prune', true) ;
+  bestEpoch = findBestCheckpoint(expDir, 'priorityMetric', 'regLoss', ...
+                                 'prune', true) ;
 
-% make predictions for kaggle submission
-generatePredictions(expDir, imdb, bestEpoch, opts) ;
+  % make predictions for kaggle submission
+  generatePredictions(expDir, imdb, bestEpoch, opts) ;
 
 % ----------------------------
 function imdb = loadImdb(opts)
@@ -188,18 +191,11 @@ opts.batchOpts.batchSize = opts.train.batchSize ;
 
 extras = {} ;
 switch opts.modelOpts.loss
-  case 'euclidean'
-    loss_func = @vl_nneuclideanloss ;
-  case 'huber'
-    loss_func = @vl_nnhuberloss ;
-  case 'tukey'
-    extras = {'scaleRes', 1} ;
-    loss_func = @vl_nntukeyloss ;
-  case 'tukey7'
-    extras = {'scaleRes', 7} ;
-    loss_func = @vl_nntukeyloss ;
-  otherwise
-    error('loss %s not recognised', opts.modelOpts.loss) ;
+  case 'euclidean', loss_func = @vl_nneuclideanloss ;
+  case 'huber', loss_func = @vl_nnhuberloss ;
+  case 'tukey', extras = {'scaleRes', 1} ; loss_func = @vl_nntukeyloss ;
+  case 'tukey7', extras = {'scaleRes', 7} ; loss_func = @vl_nntukeyloss ;
+  otherwise, error('loss %s not recognised', opts.modelOpts.loss) ;
 end
 
 used = Layer.create(loss_func, {pred, mTargets, extras{:}}, 'numInputDer', 1) ;

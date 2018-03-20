@@ -24,8 +24,8 @@ This module makes use of a subset of the public code for
 The module is easiest to install with the `vl_contrib` package manager:
 
 ```
-vl_contrib('install', 'mcnRobustLoss', 'contribUrl', 'github.com/albanie/matconvnet-contrib-test/') ;
-vl_contrib('setup', 'mcnRobustLoss', 'contribUrl', 'github.com/albanie/matconvnet-contrib-test/') ;
+vl_contrib('install', 'mcnRobustLoss') ;
+vl_contrib('setup', 'mcnRobustLoss') ;
 ```
 
 The code makes use of the `autonn` module, which can be installed as follows:
@@ -44,7 +44,7 @@ can be found in `example/robust_regression.m`.
 We will train three linear models of the form:
 
  `y = w * x + b`
- 
+
 The models will be fitted to generated data points using the loss functions 
 defined by `vl_nneuclideanloss`, `vl_nnhuberloss` and `vl_nntukeyloss`.
 

@@ -1,8 +1,8 @@
 function y = vl_nntukeyloss(x, t, varargin)
-% VL_NNTUKEYLOSS computes the Tukey Loss 
-%    This is a slight modification of the robust loss function 
-%    contained in the deep regression codebase 
-%    https://github.com/bazilas/matconvnet-deepReg 
+% VL_NNTUKEYLOSS computes the Tukey Loss
+%    This is a slight modification of the robust loss function
+%    contained in the deep regression codebase
+%    https://github.com/bazilas/matconvnet-deepReg
 %    and described in the paper:
 %
 %    Robust Optimization for Deep Regression
@@ -34,7 +34,7 @@ function y = vl_nntukeyloss(x, t, varargin)
 
   res = bsxfun(@rdivide, res, MAD) ;
 
-  if isempty(dzdy) 
+  if isempty(dzdy)
     scale = (C^2) / 6 ;
     yt = scale * (1 - (1 - (res ./ C).^2).^3) ;
     yt(abs(res) > C) = scale ;

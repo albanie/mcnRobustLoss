@@ -26,6 +26,7 @@ classdef HuberLoss < dagnn.Loss
 
     function obj = HuberLoss(varargin)
       obj.load(varargin) ;
+      obj.sigma = obj.sigma ;
     end
   end
 end

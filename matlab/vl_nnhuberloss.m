@@ -47,7 +47,7 @@ function y = vl_nnhuberloss(x, t, varargin)
   [opts, dzdy] = vl_argparsepos(opts, varargin) ;
 
   if numel(opts.instanceWeights) == 1
-    instanceWeights = ones(size(x)) * opts.instanceWeights ;
+    opts.instanceWeights = ones(size(x)) * opts.instanceWeights ;
   end
 
   delta = x - t ;
@@ -58,9 +58,9 @@ function y = vl_nnhuberloss(x, t, varargin)
   if isempty(dzdy)
     absDelta(linearRegion) = absDelta(linearRegion) - 0.5 / sigma2 ;
     absDelta(~linearRegion) = 0.5 * sigma2 * absDelta(~linearRegion) .^ 2 ;
-    y = instanceWeights(:)' * absDelta(:) ;
+    y = opts.instanceWeights(:)' * absDelta(:) ;
   else
     delta(linearRegion) = sign(delta(linearRegion));
     delta(~linearRegion) = sigma2 * delta(~linearRegion) ;
-    y = instanceWeights .* delta .* dzdy{1} ;
+    y = opts.instanceWeights .* delta .* dzdy{1} ;
   end

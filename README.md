@@ -14,20 +14,20 @@ This module makes use of a subset of the public code for [deepRegression](https:
 
 ### Install
 
-The module is easiest to install with the `vl_contrib` package manager:
-
-```
-vl_contrib('install', 'mcnRobustLoss') ;
-vl_contrib('setup', 'mcnRobustLoss') ;
-```
-
-The code makes use of the `autonn` and `mcnExtraLayers` modules, which can be installed as follows:
+The easiest way to install modules is with the `vl_contrib` package manager. The code makes use of the `autonn` and `mcnExtraLayers` modules, which can be installed as follows:
 
 ```
 vl_contrib('install', 'autonn') ;
 vl_contrib('setup', 'autonn') ;
 vl_contrib('install', 'mcnExtraLayers') ;
 vl_contrib('setup', 'mcnExtraLayers') ;
+```
+
+Finally, this module can be installed with:
+
+```
+vl_contrib('install', 'mcnRobustLoss') ;
+vl_contrib('setup', 'mcnRobustLoss') ;
 ```
 
 ### Experiments

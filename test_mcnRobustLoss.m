@@ -1,7 +1,7 @@
 function test_mcnRobustLoss
 % run tests for mcnRobustLoss module
 %
-% Copyright (C) 2017 Samuel Albanie 
+% Copyright (C) 2017 Samuel Albanie
 % Licensed under The MIT License [see LICENSE.md for details]
 
 % add tests to path
